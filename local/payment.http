@@ -1,0 +1,9 @@
+@base_address = https://localhost:7185
+
+POST {{base_address}}/api/payment/create
+Content-Type: application/json
+
+{
+    "amount": 86.10,
+    "currency": "GBP"
+}
