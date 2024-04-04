@@ -2,6 +2,24 @@
 
 Regis Pay is a example microservice project built with dotnet. 
 
+# Getting Started
+
+The following prerequisites are required to build and run the solution:
+- [Install Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
+- [Docker Desktop](https://docs.docker.com/desktop/) - For RabbitMQ.
+
+Run the following to get RabbitMQ running:
+
+```
+$ docker run -p 15672:15672 -p 5672:5672 masstransit/rabbitmq
+```
+
+Run the solution from Visual Studio, which should start the three programs, Api, ChangeFeed and EventConsumer.
+
+Once up and running you can test the solution by using the [payment.http](local/payment.http) file to make a API request.
+
+# Architecture
+
 ## Patterns: 
 - [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
 - [Transactional Outbox pattern (with Azure Cosmos DB)](https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos)
@@ -16,10 +34,6 @@ Regis Pay is a example microservice project built with dotnet.
 - [MassTransit](https://masstransit.io/) - A framework that provides a abstraction on top of message transports, ie. in this example RabbitMQ. It can also be used with Azure Service Bus and Amazon SQS.
 - [FastEndpoints](https://fast-endpoints.com/)  
 
-
-# Architecture
-
-//todo
 
 # Testing Strategy
 

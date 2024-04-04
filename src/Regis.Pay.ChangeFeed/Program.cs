@@ -13,6 +13,8 @@ internal class Program
         builder.Services.AddMessagingBus(builder.Configuration);
         builder.Services.AddDomain();
 
+        builder.Services.AddSingleton<IChangeEventHandler, ChangeEventHandler>();
+
         await Common.InitializeCosmos(builder.Services, builder.Configuration);
 
         builder.Services.AddHostedService<Worker>();

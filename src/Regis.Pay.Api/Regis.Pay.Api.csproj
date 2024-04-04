@@ -18,5 +18,9 @@
     <ProjectReference Include="..\Regis.Pay.Domain\Regis.Pay.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Endpoints\PaymentStatus\" />
+  </ItemGroup>
+
 
 </Project>
