@@ -20,6 +20,8 @@ Once up and running you can test the solution by using the [payment.http](local/
 
 # Architecture
 
+![Architecture diagram](./architecture.drawio.svg)
+
 ## Patterns: 
 - [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
 - [Transactional Outbox pattern (with Azure Cosmos DB)](https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos)
