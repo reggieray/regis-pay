@@ -20,7 +20,7 @@ Once up and running you can test the solution by using the [payment.http](local/
 
 # Architecture
 
-![Architecture diagram](./architecture.drawio.svg)
+![Architecture diagram](./architecture.drawio.png)
 
 ## Patterns: 
 - [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
