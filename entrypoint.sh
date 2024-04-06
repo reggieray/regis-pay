@@ -2,6 +2,7 @@
 #set -e 
 cosmosHost=$1
 cosmosPort=$2
+dotnetExe=$3
 
 # Wait for CosmosDB to be available, a health check from the container that is connecting to CosmosDB
 echo "Waiting for CosmosDB at $cosmosHost:$cosmosPort..."
@@ -19,6 +20,6 @@ echo "Adding CosmosDB Cert to Trusted Certs..."
 cp emulatorcert.crt /usr/local/share/ca-certificates/
 update-ca-certificates
 
-# Run the tests
-echo "Running API.."
-dotnet ./Regis.Pay.Api.dll
+# Run app
+echo "Running.."
+dotnet $dotnetExe

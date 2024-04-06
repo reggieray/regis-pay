@@ -35,6 +35,17 @@ services:
     networks:
         default:
            ipv4_address: 172.16.238.246
+  rabbitmq:
+    restart: always
+    container_name: "rabbit-mq"
+    hostname: "rabbitmq"
+    image: 'masstransit/rabbitmq'
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+        default:
+           ipv4_address: 172.16.238.247
   regis.pay.api:
     restart: always
     container_name: "regis-pay-api"
@@ -60,3 +71,43 @@ services:
             ipv4_address: 172.16.238.242
     volumes:
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  regis.pay.changefeed:
+    restart: always
+    container_name: "regis-pay-changefeed"
+    image: ${DOCKER_REGISTRY-}regispaychangefeed
+    build:
+      context: .
+      dockerfile: src/Regis.Pay.ChangeFeed/Dockerfile
+    depends_on:
+        - cosmosdb
+        - rabbitmq
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_HTTP_PORTS=8080
+        - Cosmos__Endpoint=https://azurecosmosemulator:8081/
+        - MassTransit__Host=rabbitmq
+    ports:
+      - "8383:8080"
+    networks:
+        default:
+            ipv4_address: 172.16.238.243
+  regis.pay.eventconsumer:
+    restart: always
+    container_name: "regis-pay-eventconsumer"
+    image: ${DOCKER_REGISTRY-}regispayeventconsumer
+    build:
+      context: .
+      dockerfile: src/Regis.Pay.EventConsumer/Dockerfile
+    depends_on:
+        - cosmosdb
+        - rabbitmq
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_HTTP_PORTS=8080
+        - Cosmos__Endpoint=https://azurecosmosemulator:8081/
+        - MassTransit__Host=rabbitmq
+    ports:
+      - "8484:8080"
+    networks:
+        default:
+            ipv4_address: 172.16.238.244
