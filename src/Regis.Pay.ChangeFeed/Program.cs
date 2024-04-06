@@ -14,13 +14,13 @@ internal class Program
         builder.Services.AddDomain();
 
         builder.Services.AddSingleton<IChangeEventHandler, ChangeEventHandler>();
+        
+        builder.Services.AddHostedService<Worker>();
 
         await Common.InitializeCosmos(builder.Services, builder.Configuration);
 
-        builder.Services.AddHostedService<Worker>();
-
         var app = builder.Build();
-
+        
         app.MapGet("/", () => "Hello Regis.Pay.ChangeFeed!");
 
         app.Run();

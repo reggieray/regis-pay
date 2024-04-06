@@ -1,0 +1,62 @@
+version: '3.8'
+networks:
+  default:
+    external: false
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"
+
+services:
+  cosmosdb:
+    restart: always
+    container_name: "azure-cosmosdb-emulator"
+    hostname: "azurecosmosemulator"
+    image: 'mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest'
+    mem_limit: 4GB
+    tty: true
+    ports:
+    - '8081:8081' # Data Explorer
+    - '8900:8900'
+    - '8901:8901'
+    - '8902:8902'
+    - '10250:10250'
+    - '10251:10251'
+    - '10252:10252'
+    - '10253:10253'
+    - '10254:10254'
+    - '10255:10255'
+    - '10256:10256'
+    - '10350:10350'
+    environment:
+        - AZURE_COSMOS_EMULATOR_PARTITION_COUNT=3
+        - AZURE_COSMOS_EMULATOR_ENABLE_DATA_PERSISTENCE=false
+        - AZURE_COSMOS_EMULATOR_IP_ADDRESS_OVERRIDE=172.16.238.246
+    networks:
+        default:
+           ipv4_address: 172.16.238.246
+  regis.pay.api:
+    restart: always
+    container_name: "regis-pay-api"
+    image: ${DOCKER_REGISTRY-}regispayapi
+    build:
+      context: .
+      dockerfile: src/Regis.Pay.Api/Dockerfile
+    depends_on:
+        - cosmosdb
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_HTTP_PORTS=8080
+        - ASPNETCORE_HTTPS_PORTS=443
+        - ASPNETCORE_Kestrel__Certificates__Default__Path=../home/app/.aspnet/https/Regis.Pay.Api.pfx
+        - Cosmos__Endpoint=https://azurecosmosemulator:8081/
+    env_file:
+      - api.env
+    ports:
+      - "8080:8080"
+      - "4433:443"
+    networks:
+        default:
+            ipv4_address: 172.16.238.242
+    volumes:
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

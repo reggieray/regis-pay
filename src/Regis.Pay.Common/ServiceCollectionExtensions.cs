@@ -48,8 +48,8 @@ namespace Regis.Pay.Common
         {
             var options = new CosmosConfigOptions();
             configuration.GetSection(CosmosConfigOptions.Position).Bind(options);
-
-            var client = BuildCosmosClient(options);
+            
+            var client = CreateCosmosClient(options);
 
             Database database = await client.CreateDatabaseIfNotExistsAsync(options.DatabaseName);
             await database.CreateContainerIfNotExistsAsync(new ContainerProperties(options.ContainerName, "/stream/id"));
@@ -78,10 +78,28 @@ namespace Regis.Pay.Common
             services.AddSingleton(options);
         }
 
-        private static CosmosClient BuildCosmosClient(CosmosConfigOptions options)
+        private static CosmosClient CreateCosmosClient(CosmosConfigOptions options)
         {
-            return new CosmosClientBuilder(options.Endpoint, options.AuthKeyOrResourceToken)
-                .Build();
+            return new CosmosClient(options.Endpoint, options.AuthKeyOrResourceToken, new CosmosClientOptions
+            {
+                SerializerOptions = new CosmosSerializationOptions
+                {
+                    PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+                },
+                HttpClientFactory = () =>
+                {
+                    /*                               *** WARNING ***
+                        * This code is for demo purposes only. In production, you should use the default behavior,
+                        * which relies on the operating system's certificate store to validate the certificates.
+                    */
+                    HttpMessageHandler httpMessageHandler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+                    };
+                    return new HttpClient(httpMessageHandler);
+                },
+                ConnectionMode = ConnectionMode.Direct
+            });
         }
     }
 }
