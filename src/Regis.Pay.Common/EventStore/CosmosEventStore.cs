@@ -8,23 +8,21 @@ namespace Regis.Pay.Common.EventStore
     public class CosmosEventStore : IEventStore
     {
         private readonly IEventTypeResolver _eventTypeResolver;
-        private readonly CosmosClient _client;
+        private readonly Container _container;
         private readonly CosmosConfigOptions _cosmosConfigOptions;
 
         public CosmosEventStore(
-            IEventTypeResolver eventTypeResolver, 
-            CosmosClient client,
+            IEventTypeResolver eventTypeResolver,
+            Container container,
             CosmosConfigOptions cosmosConfigOptions)
         {
             _eventTypeResolver = eventTypeResolver;
-            _client = client;
+            _container = container;
             _cosmosConfigOptions = cosmosConfigOptions;
         }
 
         public async Task<EventStream> LoadStreamAsync(string streamId)
         {
-            Container container = _client.GetContainer(_cosmosConfigOptions.DatabaseName, _cosmosConfigOptions.ContainerName);
-
             var sqlQueryText = "SELECT * FROM events e"
                 + " WHERE e.stream.id = @streamId"
                 + " ORDER BY e.stream.version";
@@ -35,7 +33,7 @@ namespace Regis.Pay.Common.EventStore
             int version = 0;
             var events = new List<IDomainEvent>();
 
-            FeedIterator<EventWrapper> feedIterator = container.GetItemQueryIterator<EventWrapper>(queryDefinition);
+            FeedIterator<EventWrapper> feedIterator = _container.GetItemQueryIterator<EventWrapper>(queryDefinition);
             while (feedIterator.HasMoreResults)
             {
                 FeedResponse<EventWrapper> response = await feedIterator.ReadNextAsync();
@@ -52,8 +50,6 @@ namespace Regis.Pay.Common.EventStore
 
         public async Task<bool> AppendToStreamAsync(string streamId, int expectedVersion, IEnumerable<IDomainEvent> events)
         {
-            Container container = _client.GetContainer(_cosmosConfigOptions.DatabaseName, _cosmosConfigOptions.ContainerName);
-
             var partitionKey = new PartitionKey(streamId);
 
             dynamic[] parameters =
@@ -63,7 +59,7 @@ namespace Regis.Pay.Common.EventStore
                 SerializeEvents(streamId, expectedVersion, events)
             ];
 
-            return await container.Scripts.ExecuteStoredProcedureAsync<bool>("spAppendToStream", partitionKey, parameters);
+            return await _container.Scripts.ExecuteStoredProcedureAsync<bool>("spAppendToStream", partitionKey, parameters);
         }
 
         private static string SerializeEvents(string streamId, int expectedVersion, IEnumerable<IDomainEvent> events)

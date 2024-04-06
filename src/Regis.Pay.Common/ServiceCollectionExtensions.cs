@@ -44,38 +44,49 @@ namespace Regis.Pay.Common
             });
         }
 
-        public static async Task InitializeCosmos(IServiceCollection services, IConfiguration configuration)
+        public static void AddCosmosDb(this IServiceCollection services, IConfiguration configuration)
         {
             var options = new CosmosConfigOptions();
             configuration.GetSection(CosmosConfigOptions.Position).Bind(options);
-            
-            var client = CreateCosmosClient(options);
 
-            Database database = await client.CreateDatabaseIfNotExistsAsync(options.DatabaseName);
-            await database.CreateContainerIfNotExistsAsync(new ContainerProperties(options.ContainerName, "/stream/id"));
-            await database.CreateContainerIfNotExistsAsync(new ContainerProperties(options.LeasesContainerName, "/id"));
-
-
-            var storedProcedureProperties = new StoredProcedureProperties
-            {
-                Id = "spAppendToStream",
-                Body = File.ReadAllText($"{AppDomain.CurrentDomain.BaseDirectory}/EventStore/js/spAppendToStream.js")
-            };
-
-            var eventsContainer = database.GetContainer(options.ContainerName);
-
-            try
-            {
-                await eventsContainer.Scripts.ReplaceStoredProcedureAsync(storedProcedureProperties);
-            }
-            catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
-            {
-                // Stored procedure didn't exist yet.
-                await eventsContainer.Scripts.CreateStoredProcedureAsync(storedProcedureProperties);
-            }
-
-            services.AddSingleton(client);
             services.AddSingleton(options);
+            services.AddSingleton(x =>
+            {
+                var options = x.GetRequiredService<CosmosConfigOptions>();
+                var cosmosClient = CreateCosmosClient(options);
+
+                return cosmosClient;
+            });
+
+            services.AddSingleton(x =>
+            {
+                var cosmosClient = x.GetRequiredService<CosmosClient>();
+
+                Database database = cosmosClient.CreateDatabaseIfNotExistsAsync(options.DatabaseName).GetAwaiter().GetResult();
+                database.CreateContainerIfNotExistsAsync(new ContainerProperties(options.ContainerName, "/stream/id")).GetAwaiter().GetResult();
+                database.CreateContainerIfNotExistsAsync(new ContainerProperties(options.LeasesContainerName, "/id")).GetAwaiter().GetResult();
+
+
+                var storedProcedureProperties = new StoredProcedureProperties
+                {
+                    Id = "spAppendToStream",
+                    Body = File.ReadAllText($"{AppDomain.CurrentDomain.BaseDirectory}/EventStore/js/spAppendToStream.js")
+                };
+
+                var eventsContainer = database.GetContainer(options.ContainerName);
+
+                try
+                {
+                    eventsContainer.Scripts.ReplaceStoredProcedureAsync(storedProcedureProperties).GetAwaiter().GetResult();
+                }
+                catch (CosmosException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    // Stored procedure didn't exist yet.
+                    eventsContainer.Scripts.CreateStoredProcedureAsync(storedProcedureProperties).GetAwaiter().GetResult();
+                }
+
+                return eventsContainer;
+            });
         }
 
         private static CosmosClient CreateCosmosClient(CosmosConfigOptions options)
