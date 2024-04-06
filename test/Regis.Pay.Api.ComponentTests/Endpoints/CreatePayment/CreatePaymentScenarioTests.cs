@@ -49,7 +49,7 @@ namespace Regis.Pay.Api.UnitTests.Endpoints.CreatePayment
             private readonly HttpClient _createApiClient;
             private CreatePaymentRequest _paymentRequest = default!;
             private HttpResponseMessage _response = default!;
-            private RegisPayApi _regisPayApi = default!;
+            private readonly RegisPayApi _regisPayApi = default!;
 
             public Context()
             {

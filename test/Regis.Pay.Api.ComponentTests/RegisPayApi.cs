@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
@@ -10,6 +11,7 @@ namespace Regis.Pay.Api.UnitTests
     class RegisPayApi : WebApplicationFactory<Program>
     {
         public readonly Mock<IEventStore> MockEventStore = new();
+        public readonly Mock<CosmosClient> MockCosmosClient = new();
 
         protected override IHost CreateHost(IHostBuilder builder)
         {
@@ -17,6 +19,9 @@ namespace Regis.Pay.Api.UnitTests
             {
                 services.RemoveAll(typeof(IEventStore));
                 services.AddSingleton(MockEventStore.Object);
+
+                services.RemoveAll(typeof(CosmosClient));
+                services.AddSingleton(MockCosmosClient.Object);
             });
 
             return base.CreateHost(builder);
