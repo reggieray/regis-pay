@@ -14,7 +14,7 @@ namespace Regis.Pay.EventConsumer.Consumers
 
         public Task Consume(ConsumeContext<PaymentCompleted> context)
         {
-            _logger.LogInformation("PaymentCompleted for {paymentId}", context.Message.AggregateId);
+            _logger.LogInformation("Consuming {event} for paymentId: {paymentId}", nameof(PaymentCompleted), context.Message.AggregateId);
 
             return Task.CompletedTask;
         }

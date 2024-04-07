@@ -1,7 +1,7 @@
 
 ### VS
 
-POST http://localhost:7185/api/payment/create
+POST https://localhost:7185/api/payment/create
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 ### docker
 
-POST http://localhost:8080/api/payment/create
+POST https://localhost:4433/api/payment/create
 Content-Type: application/json
 
 {

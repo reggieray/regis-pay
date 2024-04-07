@@ -7,14 +7,20 @@ namespace Regis.Pay.EventConsumer.Consumers
     public class PaymentInitiatedComsumer : IConsumer<PaymentInitiated>
     {
         private readonly IPaymentRepository _paymentRepository;
+        private readonly ILogger<PaymentInitiatedComsumer> _logger;
 
-        public PaymentInitiatedComsumer(IPaymentRepository paymentRepository)
+        public PaymentInitiatedComsumer(
+            IPaymentRepository paymentRepository,
+            ILogger<PaymentInitiatedComsumer> logger)
         {
             _paymentRepository = paymentRepository;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<PaymentInitiated> context)
         {
+            _logger.LogInformation("Consuming {event} for paymentId: {paymentId}", nameof(PaymentInitiated), context.Message.AggregateId);
+
             var payment = await _paymentRepository.LoadAsync(context.Message.AggregateId);
 
             await Task.Delay(300); // Do some process here on payment initiated. eg. save to SQL database or third party system.

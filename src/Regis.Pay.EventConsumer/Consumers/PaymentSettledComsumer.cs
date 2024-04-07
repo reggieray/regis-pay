@@ -7,14 +7,20 @@ namespace Regis.Pay.EventConsumer.Consumers
     public class PaymentSettledComsumer : IConsumer<PaymentSettled>
     {
         private readonly IPaymentRepository _paymentRepository;
+        private readonly ILogger<PaymentSettledComsumer> _logger;
 
-        public PaymentSettledComsumer(IPaymentRepository paymentRepository)
+        public PaymentSettledComsumer(
+            IPaymentRepository paymentRepository,
+            ILogger<PaymentSettledComsumer> logger)
         {
             _paymentRepository = paymentRepository;
+            _logger = logger;
         }
 
         public async Task Consume(ConsumeContext<PaymentSettled> context)
         {
+            _logger.LogInformation("Consuming {event} for paymentId: {paymentId}", nameof(PaymentSettled), context.Message.AggregateId);
+
             var payment = await _paymentRepository.LoadAsync(context.Message.AggregateId);
 
             await Task.Delay(300); // Do some process here on payment settled. eg. send out webhook.
