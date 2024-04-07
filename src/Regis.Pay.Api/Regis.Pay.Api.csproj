@@ -11,12 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Regis.Pay.Api.ComponentTests" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Regis.Pay.Domain\Regis.Pay.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Regis.Pay.Api.ComponentTests" />
+  </ItemGroup>
 
 </Project>

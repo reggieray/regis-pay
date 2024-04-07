@@ -38,8 +38,14 @@ namespace Regis.Pay.Common
 
                 if (addConsumers) 
                 {
-                    var entryAssembly = Assembly.GetEntryAssembly();
-                    x.AddConsumers(entryAssembly!);
+                    var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                                          .SelectMany(s => s.GetTypes())
+                                          .Where(p => typeof(IConsumer).IsAssignableFrom(p) && p.IsClass &&
+                                            !p.IsAbstract && p.Namespace!.Contains("Regis.Pay.EventConsumer."))
+                                          .Select(x => x.Assembly)
+                                          .ToArray();
+
+                    x.AddConsumers(assemblies);
                 }
             });
         }
