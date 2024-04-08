@@ -1,76 +1,75 @@
 # Introduction
 
-Regis Pay is a example microservice project built with dotnet. 
+Regis Pay is a example event-driven microservice architecture project built with dotnet, making use of the [Transactional Outbox pattern (with Azure Cosmos DB)](https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos) and [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing).
 
 # Getting Started
 
-The following prerequisites are required to build and run the solution:
-- [Install Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
-- [Docker Desktop](https://docs.docker.com/desktop/) - For RabbitMQ.
+There are two ways to get started and up and running. Both have their own pros and cons.
 
-Run the following to get RabbitMQ running:
+## Visual Studio
+
+### Prerequisites
+
+The following prerequisites are required to build and run the solution. You can either install them individually or via docker:
+- [Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
+- [RabbitMQ](https://www.rabbitmq.com/docs/download)
+
+### Steps
+
+1. Run the solution from Visual Studio, which should start the three programs, `Api`, `ChangeFeed` and `EventConsumer`.
+
+
+
+## Docker
+
+> [!NOTE]  
+> This option offer a all in one solution. No need to install/run CosmosDB or RabbitMQ individually.
+
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/get-started/) - preferred docker solution.
+
+### Steps
+
+1. Run the [localSetup.ps1](localSetup.ps1) from your terminal. This is to setup the cert on docker for HTTPS support.
 
 ```
-$ docker run -p 15672:15672 -p 5672:5672 masstransit/rabbitmq
+.\localSetup.ps1
 ```
 
-Run the solution from Visual Studio, which should start the three programs, Api, ChangeFeed and EventConsumer.
+2. Run docker compose
 
-Once up and running you can test the solution by using the [payment.http](local/payment.http) file to make a API request.
+```
+docker-compose up build
+```
+
+## Manually Testing
+
+Once up and running you can test the solution by using the [payment.http](local/payment.http) file to make a API request and observe the logs. As this solution uses CosmosDB and RabbitMQ, you can also inspect these systems to verify integration.
 
 # Architecture
 
+This diagram depicts the architecture of this solution.
+
 ![Architecture diagram](./docs/images/architecture.drawio.png)
 
-## Patterns: 
-- [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing)
-- [Transactional Outbox pattern (with Azure Cosmos DB)](https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos)
+- **API**: Represents the application programming interface that exposes endpoints for creating, updating, and deleting data.
+- **Change Feed Processor**: Monitors changes to data (e.g., database records) and publishes events when changes occur.
+- **Event Consumer**: Subscribes events and processes them (e.g., updating databases, sending notifications, etc.).
 
-## Technologies: 
+## Technologies
+
+Core infrastructure technologies in this solution are:
 
 - [Azure Cosmos DB](https://azure.microsoft.com/en-gb/products/cosmos-db) - A NoSQL database for storing data. 
 - [RabbitMQ](https://www.rabbitmq.com/) - A reliable and mature messaging and streaming broker.
 
-## Nuget Packages: 
+## Nuget Packages
+
+Notable packages used in this solution are:
 
 - [MassTransit](https://masstransit.io/) - A framework that provides a abstraction on top of message transports, ie. in this example RabbitMQ. It can also be used with Azure Service Bus and Amazon SQS.
-- [FastEndpoints](https://fast-endpoints.com/)  
-
-
-# Testing Strategy
-
-This section will go over the testing strategy for this example project and the reasoning behind the each approach.
-
-## Unit Tests
-
-Testing each unit at a granular level which subscribes more to the solitary unit test definition as opposed to a sociable unit test.
-
-Ideally there should be few of these type of tests as possible as component tests should offer the same coverage with fewer tests to maintain. These are useful when it's hard to write test coverage for a unit in a component test.
-
-## Component Tests
-
-Component tests could be described as a sociable unit test. I won't focus on naming but instead the characteristics in this example. Tests are written in a given-when-then format.
-
-Ideally giving greater code coverage with fewer tests to maintain. Tests as much of a unit/component as possible until it's difficult to do so and falling back to mocking or stubbing.
-
-A few examples:
-- Testing a endpoint up until the point where it hits a database. 
-- Testing a handler that does a HTTP call with the HTTP call mocked/stubbed out.
-- Testing a handler that publishes a message with the message broker mocked/stubbed out.
-
-## Integration Tests
-
-Focusing on ensuring a component has integrated with it's infrastructure dependencies such as databases or messaging systems.
-
-Should not be confused with testing external or third party dependencies. Third party providers can be mocked/stubbed out with an out of process mock.
-
-## Performance Tests
-
-
-
-## End To End Tests
-
-Testing specific scenarios against the full stack including third party providers. These tests should be run only if the previous tests pass to reduce the amount of noise created on third party providers systems unless you have communication indicating otherwise.
+- [FastEndpoints](https://fast-endpoints.com/) - A developer friendly alternative to Minimal APIs & MVC.
 
 # External References
 
