@@ -1,10 +1,9 @@
 using FluentAssertions;
 using ITLIBRIUM.BddToolkit;
 using Refit;
+using Regis.Pay.Domain.IntegrationEvents;
 using Regis.Pay.Tests.Shared.ApiClient;
 using Regis.Pay.Tests.Shared.EventTestConsumer.EventTestConsumer;
-using Regis.Pay.Tests.Shared.EventTestConsumer.IntegrationEvent;
-
 namespace Regis.Pay.EndToEndTests;
 
 public class PaymentTests
