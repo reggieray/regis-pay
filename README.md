@@ -17,7 +17,7 @@ There are two ways to get started and up and running.
 
 ### Steps
 
-1. `cd` into the `local` folder and run the [localSetup.ps1](local/localSetup.ps1) from your terminal. This is to setup the cert on docker for HTTPS support.
+1. `cd` into the `local` folder and run the [localSetup.ps1](local/localSetup.ps1) from your terminal. This is to setup the cert on API docker container for HTTPS support.
 
 ```
 .\localSetup.ps1
@@ -55,7 +55,7 @@ Here's an example gif showcasing the services running in docker and me manually 
 
 ![Manually Testing](./docs/images/manual-test.gif)
 
-Observe how the logs emitted as the payment goes through the services.
+Observe the logs emitted as the payment goes through the services.
 
 # Architecture
 
