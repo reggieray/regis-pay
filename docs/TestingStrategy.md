@@ -25,7 +25,7 @@ Focusing on ensuring a component has integrated with it's infrastructure depende
 
 Should not be confused with testing external or third party dependencies. Third party providers can be mocked/stubbed out with an out of process mock.
 
-## Performance Tests
+## Load Tests
 
 //TODO
 

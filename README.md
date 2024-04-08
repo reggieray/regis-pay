@@ -4,21 +4,7 @@ Regis Pay is a example event-driven microservice architecture project built with
 
 # Getting Started
 
-There are two ways to get started and up and running. Both have their own pros and cons.
-
-## Visual Studio
-
-### Prerequisites
-
-The following prerequisites are required to build and run the solution. You can either install them individually or via docker:
-- [Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
-- [RabbitMQ](https://www.rabbitmq.com/docs/download)
-
-### Steps
-
-1. Run the solution from Visual Studio, which should start the three programs, `Api`, `ChangeFeed` and `EventConsumer`.
-
-
+There are two ways to get started and up and running.
 
 ## Docker
 
@@ -31,21 +17,45 @@ The following prerequisites are required to build and run the solution. You can 
 
 ### Steps
 
-1. Run the [localSetup.ps1](localSetup.ps1) from your terminal. This is to setup the cert on docker for HTTPS support.
+1. `cd` into the `local` folder and run the [localSetup.ps1](local/localSetup.ps1) from your terminal. This is to setup the cert on docker for HTTPS support.
 
 ```
 .\localSetup.ps1
 ```
 
-2. Run docker compose
+2. Then run docker compose
 
 ```
 docker-compose up build
 ```
 
+This should run all the services as-well all the required dependencies in a pre-configured working state. 
+
+## Visual Studio
+
+### Prerequisites
+
+The following prerequisites are required to build and run the solution. You can either install them individually or via docker:
+- [Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
+- [RabbitMQ](https://www.rabbitmq.com/docs/download)
+
+### Steps
+
+1. Run the services as mentioned in the prerequisites.
+
+2. Run the solution from Visual Studio, which should start the three programs, `Api`, `ChangeFeed` and `EventConsumer`.
+
+
+
 ## Manually Testing
 
 Once up and running you can test the solution by using the [payment.http](local/payment.http) file to make a API request and observe the logs. As this solution uses CosmosDB and RabbitMQ, you can also inspect these systems to verify integration.
+
+Here's an example gif showcasing the services running in docker and me manually submitting a payment request.
+
+![Manually Testing](./docs/images/manual-test.gif)
+
+Observe how the logs emitted as the payment goes through the services.
 
 # Architecture
 
@@ -70,7 +80,3 @@ Notable packages used in this solution are:
 
 - [MassTransit](https://masstransit.io/) - A framework that provides a abstraction on top of message transports, ie. in this example RabbitMQ. It can also be used with Azure Service Bus and Amazon SQS.
 - [FastEndpoints](https://fast-endpoints.com/) - A developer friendly alternative to Minimal APIs & MVC.
-
-# External References
-
-- https://github.com/amolenk/CosmosEventSourcing/ - Example used for Event Store.
