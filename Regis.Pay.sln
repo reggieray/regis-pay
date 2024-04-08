@@ -52,6 +52,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Regis.Pay.IntegrationTests"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "application", "application", "{AC8D3EC3-35C1-41D1-80A9-A516B5E9E998}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Regis.Pay.Tests.Shared", "test\Regis.Pay.Tests.Shared\Regis.Pay.Tests.Shared.csproj", "{3B8013D1-B427-4500-AD0D-E6DCFF94A7F9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +116,10 @@ Global
 		{7E0556D3-BDD3-43AC-897C-8A52339BD442}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E0556D3-BDD3-43AC-897C-8A52339BD442}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E0556D3-BDD3-43AC-897C-8A52339BD442}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B8013D1-B427-4500-AD0D-E6DCFF94A7F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B8013D1-B427-4500-AD0D-E6DCFF94A7F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B8013D1-B427-4500-AD0D-E6DCFF94A7F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B8013D1-B427-4500-AD0D-E6DCFF94A7F9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +145,7 @@ Global
 		{65A0ACA5-3C47-48B6-94E5-503AD1597D19} = {E39135D1-F3C9-4C4F-A37D-87D46BE276CC}
 		{7E0556D3-BDD3-43AC-897C-8A52339BD442} = {65A0ACA5-3C47-48B6-94E5-503AD1597D19}
 		{AC8D3EC3-35C1-41D1-80A9-A516B5E9E998} = {4BAB472A-DFBB-4C28-AFD7-6757CEB7D13E}
+		{3B8013D1-B427-4500-AD0D-E6DCFF94A7F9} = {E39135D1-F3C9-4C4F-A37D-87D46BE276CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {1CE5CEC2-7712-47C6-84C3-27561F70FB19}

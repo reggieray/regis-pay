@@ -1,8 +1,9 @@
 using FluentAssertions;
 using ITLIBRIUM.BddToolkit;
 using Refit;
-using Regis.Pay.EndToEndTests.ApiClient;
-using Regis.Pay.EndToEndTests.EventTestConsumer;
+using Regis.Pay.Tests.Shared.ApiClient;
+using Regis.Pay.Tests.Shared.EventTestConsumer.EventTestConsumer;
+using Regis.Pay.Tests.Shared.EventTestConsumer.IntegrationEvent;
 
 namespace Regis.Pay.EndToEndTests;
 

@@ -2,13 +2,14 @@
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
+using Regis.Pay.Domain;
 
-namespace Regis.Pay.EndToEndTests.EventTestConsumer
+namespace Regis.Pay.Tests.Shared.EventTestConsumer.EventTestConsumer
 {
-    public abstract class EventTestConsumerBase<T> where T : class
+    public abstract class EventTestConsumerBase<T> where T : class, IIntegrationEvent
     {
         private T _event = default!;
-        public abstract string ExchangeName { get;}
+        public abstract string ExchangeName { get; }
 
         public async Task<T> ListenToEvent(Func<Task> function, int waitMS = 30000)
         {
@@ -55,17 +56,12 @@ namespace Regis.Pay.EndToEndTests.EventTestConsumer
             {
                 await Task.Delay(TimeSpan.FromMilliseconds(waitMS), tokenSource.Token);
             }
-            catch(TaskCanceledException)
+            catch (TaskCanceledException)
             {
                 //swallowing expected exeption
             }
-            
+
             return _event;
         }
-    }
-
-    public class ConsumedMessage
-    {
-        public object Message { get; set; } = default!;
     }
 }

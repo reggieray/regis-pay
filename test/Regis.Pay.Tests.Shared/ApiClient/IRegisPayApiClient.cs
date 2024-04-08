@@ -1,6 +1,6 @@
 ﻿using Refit;
 
-namespace Regis.Pay.EndToEndTests.ApiClient
+namespace Regis.Pay.Tests.Shared.ApiClient
 {
     public interface IRegisPayApiClient
     {
