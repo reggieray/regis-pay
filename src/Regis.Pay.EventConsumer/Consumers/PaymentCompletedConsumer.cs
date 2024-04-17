@@ -3,11 +3,11 @@ using Regis.Pay.Domain.IntegrationEvents;
 
 namespace Regis.Pay.EventConsumer.Consumers
 {
-    public class PaymentCompletedComsumer : IConsumer<PaymentCompleted>
+    public class PaymentCompletedConsumer : IConsumer<PaymentCompleted>
     {
-        private readonly ILogger<PaymentCompletedComsumer> _logger;
+        private readonly ILogger<PaymentCompletedConsumer> _logger;
 
-        public PaymentCompletedComsumer(ILogger<PaymentCompletedComsumer> logger)
+        public PaymentCompletedConsumer(ILogger<PaymentCompletedConsumer> logger)
         {
             _logger = logger;
         }

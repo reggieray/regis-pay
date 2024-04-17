@@ -4,14 +4,14 @@ using Regis.Pay.Domain.IntegrationEvents;
 
 namespace Regis.Pay.EventConsumer.Consumers
 {
-    public class PaymentSettledComsumer : IConsumer<PaymentSettled>
+    public class PaymentSettledConsumer : IConsumer<PaymentSettled>
     {
         private readonly IPaymentRepository _paymentRepository;
-        private readonly ILogger<PaymentSettledComsumer> _logger;
+        private readonly ILogger<PaymentSettledConsumer> _logger;
 
-        public PaymentSettledComsumer(
+        public PaymentSettledConsumer(
             IPaymentRepository paymentRepository,
-            ILogger<PaymentSettledComsumer> logger)
+            ILogger<PaymentSettledConsumer> logger)
         {
             _paymentRepository = paymentRepository;
             _logger = logger;

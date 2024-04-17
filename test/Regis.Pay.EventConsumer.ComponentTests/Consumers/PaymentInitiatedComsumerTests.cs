@@ -49,7 +49,7 @@ namespace Regis.Pay.EventConsumer.ComponentTests.Consumers
             {   
                 await _massTransitTestHarness.Bus.Publish(_paymentInitiated);
 
-                var consumerTestHarness = _massTransitTestHarness.GetConsumerHarness<PaymentInitiatedComsumer>();
+                var consumerTestHarness = _massTransitTestHarness.GetConsumerHarness<PaymentInitiatedConsumer>();
 
                 var consumed = await consumerTestHarness.Consumed.Any<PaymentInitiated>(x => x.Context.Message.AggregateId == _paymentInitiated.AggregateId);
 
