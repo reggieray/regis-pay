@@ -1,6 +1,8 @@
+
+
 # Introduction
 
-Regis Pay is a example event-driven microservice architecture project built with dotnet, making use of the [Transactional Outbox pattern (with Azure Cosmos DB)](https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos) and [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing).
+Regis Pay is an example event-driven microservice architecture project built with dotnet, making use of the [Transactional Outbox pattern (with Azure Cosmos DB)](https://learn.microsoft.com/en-us/azure/architecture/databases/guide/transactional-outbox-cosmos) and [Event Sourcing pattern](https://learn.microsoft.com/en-us/azure/architecture/patterns/event-sourcing).
 
 # Getting Started
 
@@ -9,7 +11,7 @@ There are two ways to get started and up and running.
 ## Docker
 
 > [!NOTE]  
-> This option offer a all in one solution. No need to install/run CosmosDB or RabbitMQ individually.
+> This option offers an all in one solution. No need to install/run CosmosDB or RabbitMQ individually.
 
 ### Prerequisites
 
@@ -29,7 +31,7 @@ There are two ways to get started and up and running.
 docker-compose up build
 ```
 
-This should run all the services as-well all the required dependencies in a pre-configured working state. 
+This should run all the services as-well as all the required dependencies in a pre-configured working state. 
 
 ## Visual Studio
 
