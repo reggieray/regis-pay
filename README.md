@@ -31,18 +31,22 @@ Change Feed-->>Message Broker: Payment Initiated
 Note over Message Broker, Consumer: Consume integration events
 Message Broker-->>Consumer: Payment Initiated
 activate Consumer
+Note over Consumer, 3rd Party System: Handle integration event
+Consumer->> 3rd Party System: Create Payment
 Consumer->> Event Store: Payment Created
 deactivate Consumer
 Event Store-->>Change Feed: Payment Created
 Change Feed-->>Message Broker: Payment Created
 Message Broker-->>Consumer: Payment Created
 activate Consumer
+Consumer->> 3rd Party System: Settle Payment
 Consumer->> Event Store: Payment Settled
 deactivate Consumer
 Event Store-->>Change Feed: Payment Settled
 Change Feed-->>Message Broker: Payment Settled
 Message Broker-->>Consumer: Payment Settled
 activate Consumer
+Consumer->> 3rd Party System: Send Notification
 Consumer->> Event Store: Payment Completed
 deactivate Consumer
 Event Store-->>Change Feed: Payment Completed
