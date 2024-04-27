@@ -6,6 +6,49 @@ Regis Pay is fictional payment processor created as an example of a event-driven
 <br>
 <br>
 
+# Architecture
+
+This diagram depicts the architecture of this solution.
+
+![Architecture diagram](./docs/images/architecture.drawio.png)
+
+- **API**: Represents the application programming interface that exposes endpoints for creating, updating, and deleting data.
+- **Change Feed Processor**: Monitors changes to data (e.g., database records) and publishes events when changes occur.
+- **Event Consumer**: Subscribes events and processes them (e.g., updating databases, sending notifications, etc.).
+
+This sequence diagram shows how a payment would go travel through the system. 
+
+```mermaid
+sequenceDiagram
+actor Client
+Client->> API: Create Payment
+Note over API,Event Store: Persisting event to event store
+API->>Event Store: Payment Initiated
+Note over Event Store, Change Feed: Domain events
+Event Store-->>Change Feed: Payment Initiated
+Note over Change Feed, Message Broker: Publish integration events
+Change Feed-->>Message Broker: Payment Initiated
+Note over Message Broker, Consumer: Consume integration events
+Message Broker-->>Consumer: Payment Initiated
+activate Consumer
+Consumer->> Event Store: Payment Created
+deactivate Consumer
+Event Store-->>Change Feed: Payment Created
+Change Feed-->>Message Broker: Payment Created
+Message Broker-->>Consumer: Payment Created
+activate Consumer
+Consumer->> Event Store: Payment Settled
+deactivate Consumer
+Event Store-->>Change Feed: Payment Settled
+Change Feed-->>Message Broker: Payment Settled
+Message Broker-->>Consumer: Payment Settled
+activate Consumer
+Consumer->> Event Store: Payment Completed
+deactivate Consumer
+Event Store-->>Change Feed: Payment Completed
+Change Feed-->>Message Broker: Payment Completed
+```
+
 # Getting Started
 
 There are two ways to get started and up and running.
@@ -49,8 +92,6 @@ The following prerequisites are required to build and run the solution. You can 
 
 2. Run the solution from Visual Studio, which should start the three programs, `Api`, `ChangeFeed` and `EventConsumer`.
 
-
-
 ## Manually Testing
 
 Once up and running you can test the solution by using the [payment.http](local/payment.http) file to make a API request and observe the logs. As this solution uses CosmosDB and RabbitMQ, you can also inspect these systems to verify integration.
@@ -60,16 +101,6 @@ Here's an example gif showcasing the services running in docker and me manually 
 ![Manually Testing](./docs/images/manual-test.gif)
 
 Observe the logs emitted as the payment goes through the services.
-
-# Architecture
-
-This diagram depicts the architecture of this solution.
-
-![Architecture diagram](./docs/images/architecture.drawio.png)
-
-- **API**: Represents the application programming interface that exposes endpoints for creating, updating, and deleting data.
-- **Change Feed Processor**: Monitors changes to data (e.g., database records) and publishes events when changes occur.
-- **Event Consumer**: Subscribes events and processes them (e.g., updating databases, sending notifications, etc.).
 
 ## Technologies
 
