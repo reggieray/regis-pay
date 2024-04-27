@@ -53,6 +53,16 @@ Event Store-->>Change Feed: Payment Completed
 Change Feed-->>Message Broker: Payment Completed
 ```
 
+All components have been added to make the clear distinction how a payment flows through this architecture 
+The same components from the previous diagram are included below and the new ones have been marked with asterisk(*). 
+
+- **API**: Represents the application programming interface that exposes endpoints for creating, updating, and deleting data.
+- **Event Store***: Where event data is persisted. In this example project Cosmos DB, other databases are available.
+- **Change Feed Processor**: Monitors changes to data (e.g., database records) and publishes events when changes occur.
+- **Message Broker***: System used to forward on messages (integration events). Used the term Message Broker because RabbitMQ was used in this example, but this could easily be swapped out for servies like Azure Service Bus.
+- **Event Consumer**: Subscribes events and processes them (e.g., updating databases, sending notifications, etc.).
+- **3rd Party System***: Represents a thrid party system, either internally or externally.
+
 # Getting Started
 
 There are two ways to get started and up and running.
