@@ -87,7 +87,7 @@ There are two ways to get started and up and running.
 2. Then run docker compose
 
 ```
-docker-compose up build
+docker-compose up --build
 ```
 
 This should run all the services as-well as all the required dependencies in a pre-configured working state. 
