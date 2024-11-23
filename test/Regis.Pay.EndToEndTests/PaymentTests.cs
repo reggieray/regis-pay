@@ -1,5 +1,5 @@
 using FluentAssertions;
-using ITLIBRIUM.BddToolkit;
+using FluentTesting;
 using Refit;
 using Regis.Pay.Domain.IntegrationEvents;
 using Regis.Pay.Tests.Shared.ApiClient;
@@ -8,25 +8,27 @@ namespace Regis.Pay.EndToEndTests;
 
 public class PaymentTests
 {
+    private readonly TestSteps _testSteps = new();
+    
     [Fact]
-    public void SuccessfullyCompletedPayment()
+    public async Task SuccessfullyCompletedPayment()
     {
-        Bdd.Scenario<Context>()
+        await _testSteps
                 .Given(c => c.ACreatePaymentRequest())
                 .When(c => c.TheCreatePaymentIsRequested())
                 .Then(c => c.ThePaymentIsSuccessfullyCompleted())
-                .Test();
+                .RunAsync();
     }
 
-    private class Context
+    private class TestSteps
     {
         private readonly IRegisPayApiClient _regisPayApiClient;
         private CreatePaymentRequest _createPaymentRequest;
-        private PaymentCompletedEventTestConsumer _testConsumer;
+        private readonly PaymentCompletedEventTestConsumer _testConsumer;
         private PaymentCompleted _paymentCompleted;
         private CreatePaymentResponse _createPaymentResponse;
 
-        public Context()
+        public TestSteps()
         {
             _regisPayApiClient = RestService.For<IRegisPayApiClient>("https://localhost:4433");
             _testConsumer = new PaymentCompletedEventTestConsumer();

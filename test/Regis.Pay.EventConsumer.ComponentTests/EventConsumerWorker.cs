@@ -7,27 +7,26 @@ using Microsoft.Extensions.Hosting;
 using Moq;
 using Regis.Pay.Common.EventStore;
 
-namespace Regis.Pay.EventConsumer.ComponentTests
+namespace Regis.Pay.EventConsumer.ComponentTests;
+
+internal class EventConsumerWorker : WebApplicationFactory<Program>
 {
-    class EventConsumerWorker : WebApplicationFactory<Program>
+    public readonly Mock<IEventStore> MockEventStore = new();
+    private readonly Mock<CosmosClient> _mockCosmosClient = new();
+
+    protected override IHost CreateHost(IHostBuilder builder)
     {
-        public readonly Mock<IEventStore> MockEventStore = new();
-        public readonly Mock<CosmosClient> MockCosmosClient = new();
-
-        protected override IHost CreateHost(IHostBuilder builder)
+        builder.ConfigureServices(services =>
         {
-            builder.ConfigureServices(services =>
-            {
-                services.RemoveAll(typeof(IEventStore));
-                services.AddSingleton(MockEventStore.Object);
+            services.RemoveAll(typeof(IEventStore));
+            services.AddSingleton(MockEventStore.Object);
 
-                services.RemoveAll(typeof(CosmosClient));
-                services.AddSingleton(MockCosmosClient.Object);
+            services.RemoveAll(typeof(CosmosClient));
+            services.AddSingleton(_mockCosmosClient.Object);
 
-                services.AddMassTransitTestHarness();
-            });
+            services.AddMassTransitTestHarness();
+        });
 
-            return base.CreateHost(builder);
-        }
+        return base.CreateHost(builder);
     }
 }
