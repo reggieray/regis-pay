@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsAspireHost>true</IsAspireHost>
+    <UserSecretsId>b5fc013d-3ed3-46a7-85b3-e44d3e86bf11</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.1.0" />
+    <PackageReference Include="Aspire.Hosting.Azure.CosmosDB" Version="9.1.0" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Regis.Pay.Api\Regis.Pay.Api.csproj" />
+    <ProjectReference Include="..\..\Regis.Pay.ChangeFeed\Regis.Pay.ChangeFeed.csproj" />
+    <ProjectReference Include="..\..\Regis.Pay.EventConsumer\Regis.Pay.EventConsumer.csproj" />
+  </ItemGroup>
+
+</Project>

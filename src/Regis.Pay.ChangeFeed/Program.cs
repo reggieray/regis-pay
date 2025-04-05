@@ -7,7 +7,7 @@ internal class Program
     private static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
+        builder.AddServiceDefaults();
         builder.Services.AddEventStore(builder.Configuration);
         builder.Services.AddMessagingBus(builder.Configuration);
         builder.Services.AddDomain();
@@ -18,7 +18,9 @@ internal class Program
         builder.Services.AddHostedService<Worker>();
 
         var app = builder.Build();
-        
+
+        app.MapDefaultEndpoints();
+
         app.MapGet("/", () => "Hello Regis.Pay.ChangeFeed!");
 
         await app.RunAsync();
