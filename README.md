@@ -67,6 +67,20 @@ The same components from the previous diagram are included below and the new one
 
 There are two ways to get started and up and running.
 
+## Aspire
+
+> [!NOTE]  
+> This is setup with a locally installed version of the Cosmos DB emulator, but could be easily updated to use a Aspire version. It is mainly setup with a locally installed version because I already had it installed.
+
+### Prerequisites
+
+- [Azure Cosmos DB Emulator](https://learn.microsoft.com/en-us/azure/cosmos-db/how-to-develop-emulator?tabs=windows%2Ccsharp&pivots=api-nosql#install-the-emulator)
+- [Docker Desktop](https://www.docker.com/get-started/) - preferred docker solution used for .
+
+### Steps
+
+1. Set the `Regis.Pay.AppHost` project as the start up project and run.
+
 ## Docker
 
 > [!NOTE]  
@@ -102,9 +116,7 @@ The following prerequisites are required to build and run the solution. You can 
 
 ### Steps
 
-1. Run the services as mentioned in the prerequisites.
-
-2. Run the solution from Visual Studio, which should start the three programs, `Api`, `ChangeFeed` and `EventConsumer`.
+1. Run the solution from Visual Studio, `Api`, `ChangeFeed` and `EventConsumer` should be set up as the start up projects.
 
 ## Manually Testing
 
