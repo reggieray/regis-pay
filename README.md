@@ -131,6 +131,11 @@ Here's an example gif showcasing the services running in docker and me manually 
 
 Observe the logs emitted as the payment goes through the services.
 
+Alternatively if you have started the application via the Aspire host you can navigate to the demo project and create a payment from the demo UI.
+
+![Demo UI](./docs/images/regis-pay-aspire-demo.gif)
+
+
 ## Technologies
 
 Core infrastructure technologies in this solution are:
