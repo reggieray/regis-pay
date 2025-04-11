@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.38.1" />
+    <PackageReference Include="MudBlazor" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Yarp" Version="9.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Regis.Pay.Aspire\Regis.Pay.ServiceDefaults\Regis.Pay.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Regis.Pay.Common\Regis.Pay.Common.csproj" />
+  </ItemGroup>
+</Project>

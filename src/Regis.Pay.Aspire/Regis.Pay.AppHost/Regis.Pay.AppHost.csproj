@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Regis.Pay.Api\Regis.Pay.Api.csproj" />
     <ProjectReference Include="..\..\Regis.Pay.ChangeFeed\Regis.Pay.ChangeFeed.csproj" />
+    <ProjectReference Include="..\..\Regis.Pay.Demo\Regis.Pay.Demo.csproj" />
     <ProjectReference Include="..\..\Regis.Pay.EventConsumer\Regis.Pay.EventConsumer.csproj" />
   </ItemGroup>
 

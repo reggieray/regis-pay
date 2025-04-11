@@ -8,7 +8,7 @@ var rabbitmq = builder.AddRabbitMQ("regis-pay-messaging", rabbitMqUser, rabbitMq
 
 var cosmos = builder.AddConnectionString("cosmos-db");
 
-builder.AddProject<Projects.Regis_Pay_Api>("regis-pay-api")
+var api = builder.AddProject<Projects.Regis_Pay_Api>("regis-pay-api")
     .WithReference(cosmos);
 builder.AddProject<Projects.Regis_Pay_ChangeFeed>("regis-pay-changefeed")
     .WithReference(rabbitmq)
@@ -16,5 +16,9 @@ builder.AddProject<Projects.Regis_Pay_ChangeFeed>("regis-pay-changefeed")
 builder.AddProject<Projects.Regis_Pay_EventConsumer>("regis-pay-eventconsumer")
     .WithReference(cosmos)
     .WithReference(rabbitmq);
+builder.AddProject<Projects.Regis_Pay_Demo>("regis-pay-demo")
+    .WithExternalHttpEndpoints()
+    .WithReference(api)
+    .WaitFor(api);
 
 builder.Build().Run();

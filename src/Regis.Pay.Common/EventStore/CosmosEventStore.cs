@@ -1,7 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-using Regis.Pay.Common.Configuration;
 
 namespace Regis.Pay.Common.EventStore
 {
@@ -9,16 +8,13 @@ namespace Regis.Pay.Common.EventStore
     {
         private readonly IEventTypeResolver _eventTypeResolver;
         private readonly Container _container;
-        private readonly CosmosConfigOptions _cosmosConfigOptions;
 
         public CosmosEventStore(
             IEventTypeResolver eventTypeResolver,
-            Container container,
-            CosmosConfigOptions cosmosConfigOptions)
+            Container container)
         {
             _eventTypeResolver = eventTypeResolver;
             _container = container;
-            _cosmosConfigOptions = cosmosConfigOptions;
         }
 
         public async Task<EventStream> LoadStreamAsync(string streamId)
