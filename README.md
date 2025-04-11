@@ -65,7 +65,7 @@ The same components from the previous diagram are included below and the new one
 
 # Getting Started
 
-There are two ways to get started and up and running.
+There are three ways to get started and up and running.
 
 ## Aspire
 
