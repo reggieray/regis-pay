@@ -80,8 +80,9 @@ There are two ways to get started and up and running.
 ### Steps
 
 1. Set the `Regis.Pay.AppHost` project as the start up project and run.
+1. (optional) Navigate to Demo project and create a payment.
 
-## Docker
+## Docker Compose
 
 > [!NOTE]  
 > This option offers an all in one solution. No need to install/run CosmosDB or RabbitMQ individually.
@@ -103,6 +104,8 @@ There are two ways to get started and up and running.
 ```
 docker-compose up --build
 ```
+
+3. (optional) Navigate to `payment.http` file in the local folder and create a payment.
 
 This should run all the services as-well as all the required dependencies in a pre-configured working state. 
 

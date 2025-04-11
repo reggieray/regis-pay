@@ -2,7 +2,7 @@
 @using System.Text.Json
 @using Regis.Pay.Common.EventStore
 
-@inject RegisPayApiClient apiClient
+@inject RegisPayApiClient ApiClient
 @inject CosmosDbService CosmosService
 
 
@@ -49,7 +49,7 @@
         </MudExpansionPanels>
     </MudPaper>}
 
-@if (isLoadingEvents)
+@if (IsLoadingEvents)
 {
     <MudProgressLinear Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
     <p>Loading payment events, please wait...</p>
@@ -62,7 +62,7 @@
     public string? ResponseText { get; set; }
     public string? ErrorText { get; set; }
     private List<EventWrapper>? Events;
-    private bool isLoadingEvents = false;
+    private bool IsLoadingEvents = false;
 
 
     private async Task SendRequest()
@@ -77,8 +77,7 @@
 
         try
         {
-
-            var response = await apiClient.CreatePayment(new RegisPayPaymentRequest(Amount, Currency));
+            var response = await ApiClient.CreatePayment(new RegisPayPaymentRequest(Amount, Currency));
 
             ResponseText = JsonSerializer.Serialize(response);
 
@@ -94,7 +93,7 @@
     {
         var sqlQueryText = $"SELECT * FROM events e WHERE e.stream.id = 'pay:{paymentId}' ORDER BY e.stream.version";
 
-        isLoadingEvents = true;
+        IsLoadingEvents = true;
 
         for (int i = 0; i < 20; i++)
         {
@@ -104,6 +103,6 @@
             await Task.Delay(1000);
         }
 
-        isLoadingEvents = false;
+        IsLoadingEvents = false;
     }
 }
