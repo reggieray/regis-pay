@@ -1,0 +1,24 @@
+@Regis.Pay.Mocks_HostAddress = http://localhost:5181
+
+POST {{Regis.Pay.Mocks_HostAddress}}/psp/api/payments/create/
+Accept: application/json
+Content-Type: application/json
+{
+    "amount": 86.10,
+    "currency": "GBP"
+}
+
+###
+
+POST {{Regis.Pay.Mocks_HostAddress}}/psp/api/payments/f6619a9a-4828-4af2-b631-ffe8e2d80618/settle
+Accept: application/json
+
+###
+
+POST {{Regis.Pay.Mocks_HostAddress}}/notifications/api/send
+Accept: application/json
+Content-Type: application/json
+{
+    "id": "f6619a9a-4828-4af2-b631-ffe8e2d80618",
+    "jsonPayload": "{'test': 'Testing'}"
+}   

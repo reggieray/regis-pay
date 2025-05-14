@@ -11,6 +11,8 @@ internal class Program
         builder.Services.AddMessagingBus(builder.Configuration, addConsumers: true);
         builder.Services.AddDomain();
         builder.Services.AddCosmosDb(builder.Configuration);
+        builder.Services.AddPaymentsApiClient(builder.Configuration);
+        builder.Services.AddNotificationsApiClient(builder.Configuration);
 
         var app = builder.Build();
         app.MapDefaultEndpoints();

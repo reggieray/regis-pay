@@ -2,9 +2,12 @@
 using FluentTesting;
 using MassTransit.Testing;
 using Moq;
+using Refit;
+using Regis.Pay.Common.ApiClients.Payments;
 using Regis.Pay.Common.EventStore;
 using Regis.Pay.Domain.IntegrationEvents;
 using Regis.Pay.EventConsumer.Consumers;
+using System.Net;
 
 namespace Regis.Pay.EventConsumer.ComponentTests.Consumers;
 
@@ -28,6 +31,7 @@ public class PaymentInitiatedConsumerTests
         private PaymentInitiated _paymentInitiated = default!;
         private readonly ITestHarness _massTransitTestHarness;
         private readonly Guid _paymentId = Guid.NewGuid();
+        private readonly Guid _thirdPartyPaymentId = Guid.NewGuid();
 
         public TestSteps()
         {
@@ -38,6 +42,11 @@ public class PaymentInitiatedConsumerTests
 
             _eventConsumerWorker.MockEventStore.Setup(x => x.AppendToStreamAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IEnumerable<IDomainEvent>>()))
                 .ReturnsAsync(true);
+
+            var createPaymentResponse = new ApiResponse<CreatePaymentResponse>(new HttpResponseMessage(HttpStatusCode.Accepted), new CreatePaymentResponse(_thirdPartyPaymentId), null!, null);
+
+            _eventConsumerWorker.MockPaymentsApi.Setup(x => x.CreatePaymentAsync(It.IsAny<CreatePaymentRequest>()))
+                .ReturnsAsync(createPaymentResponse);
 
             _massTransitTestHarness = _eventConsumerWorker.Services.GetTestHarness();
         }
@@ -63,13 +72,14 @@ public class PaymentInitiatedConsumerTests
             _eventConsumerWorker.MockEventStore.Verify(x => x.AppendToStreamAsync(It.Is<string>(streamId => streamId == $"pay:{_paymentId}"), It.IsAny<int>(), It.Is<IEnumerable<IDomainEvent>>(events => VerifyEvents(events))));
         }
 
-        private static bool VerifyEvents(IEnumerable<IDomainEvent> events)
+        private bool VerifyEvents(IEnumerable<IDomainEvent> events)
         {
             events.Should().NotBeEmpty();
 
             var typedEvent = events.First() as Domain.Events.PaymentCreated;
 
             typedEvent.Should().NotBeNull();
+            typedEvent!.PaymentReference.Should().Be(_thirdPartyPaymentId);
 
             return true;
         }

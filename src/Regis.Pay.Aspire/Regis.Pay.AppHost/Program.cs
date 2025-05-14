@@ -8,14 +8,20 @@ var rabbitmq = builder.AddRabbitMQ("regis-pay-messaging", rabbitMqUser, rabbitMq
 
 var cosmos = builder.AddConnectionString("cosmos-db");
 
+var mocks = builder.AddProject<Projects.Regis_Pay_Mocks>("regis-pay-mocks");
+
 var api = builder.AddProject<Projects.Regis_Pay_Api>("regis-pay-api")
     .WithReference(cosmos);
+
 builder.AddProject<Projects.Regis_Pay_ChangeFeed>("regis-pay-changefeed")
     .WithReference(rabbitmq)
     .WithReference(cosmos);
+
 builder.AddProject<Projects.Regis_Pay_EventConsumer>("regis-pay-eventconsumer")
     .WithReference(cosmos)
-    .WithReference(rabbitmq);
+    .WithReference(rabbitmq)
+    .WithReference(mocks);
+
 builder.AddProject<Projects.Regis_Pay_Demo>("regis-pay-demo")
     .WithExternalHttpEndpoints()
     .WithReference(api)

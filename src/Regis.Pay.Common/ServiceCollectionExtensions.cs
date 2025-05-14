@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.Cosmos.Fluent;
-using Microsoft.Azure.Cosmos.Scripts;
+﻿using Microsoft.Azure.Cosmos.Scripts;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,12 +6,28 @@ using Regis.Pay.Common.EventStore;
 using System.Net;
 using Regis.Pay.Common.Configuration;
 using MassTransit;
-using System.Reflection;
+using Regis.Pay.Common.ApiClients.Payments;
+using Refit;
+using Regis.Pay.Common.ApiClients.Notifications;
 
 namespace Regis.Pay.Common
 {
     public static class ServiceCollectionExtensions
     {
+        public static void AddPaymentsApiClient(this IServiceCollection services, IConfiguration configuration)
+        {
+            services
+                .AddRefitClient<IPaymentsApi>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(configuration["ApiClients:Payments:BaseUrl"]!));
+        }
+
+        public static void AddNotificationsApiClient(this IServiceCollection services, IConfiguration configuration)
+        {
+            services
+                .AddRefitClient<INotificationsApi>()
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(configuration["ApiClients:Notifications:BaseUrl"]!));
+        }
+
         public static void AddEventStore(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<CosmosConfigOptions>(configuration.GetSection(CosmosConfigOptions.Position));

@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using Regis.Pay.Common.ApiClients.Payments;
 using Regis.Pay.Domain;
 using Regis.Pay.Domain.IntegrationEvents;
 
@@ -8,13 +9,16 @@ namespace Regis.Pay.EventConsumer.Consumers
     {
         private readonly IPaymentRepository _paymentRepository;
         private readonly ILogger<PaymentInitiatedConsumer> _logger;
+        private readonly IPaymentsApi _paymentsApi;
 
         public PaymentInitiatedConsumer(
             IPaymentRepository paymentRepository,
-            ILogger<PaymentInitiatedConsumer> logger)
+            ILogger<PaymentInitiatedConsumer> logger,
+            IPaymentsApi paymentsApi)
         {
             _paymentRepository = paymentRepository;
             _logger = logger;
+            _paymentsApi = paymentsApi;
         }
 
         public async Task Consume(ConsumeContext<PaymentInitiated> context)
@@ -23,9 +27,11 @@ namespace Regis.Pay.EventConsumer.Consumers
 
             var payment = await _paymentRepository.LoadAsync(context.Message.AggregateId);
 
-            await Task.Delay(300); // Do some process here on payment initiated. eg. save to SQL database or third party system.
+            var reponse = await _paymentsApi.CreatePaymentAsync(new CreatePaymentRequest(payment.Amount, payment.Currency));
 
-            payment.Created();
+            await reponse.EnsureSuccessfulAsync();
+
+            payment.Created(reponse.Content!.PaymentId);
 
             await _paymentRepository.SaveAsync(payment);
         }

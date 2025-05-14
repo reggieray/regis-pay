@@ -2,7 +2,6 @@ using MudBlazor.Services;
 using Regis.Pay.Common.Configuration;
 using Regis.Pay.Demo;
 using Regis.Pay.Demo.Components;
-using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 

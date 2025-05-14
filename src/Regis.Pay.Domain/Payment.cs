@@ -26,14 +26,14 @@ namespace Regis.Pay.Domain
             });
         }
 
-        public void Created()
+        public void Created(Guid paymentReference)
         {
-            Apply(new PaymentCreated());
+            Apply(new PaymentCreated() { PaymentReference = paymentReference });
         }
 
-        public void Settled(Guid paymentReference)
+        public void Settled()
         {
-            Apply(new PaymentSettled() { PaymentReference = paymentReference });
+            Apply(new PaymentSettled());
         }
 
         public void Complete()
@@ -51,11 +51,11 @@ namespace Regis.Pay.Domain
         public void When(PaymentCreated @event)
         {
             PaymentCreatedTimestamp = @event.Timestamp;
+            ThridPartyReference = @event.PaymentReference;
         }
 
         public void When(PaymentSettled @event) 
         {
-            ThridPartyReference = @event.PaymentReference;
         }
 
         public void When(PaymentCompleted @event)

@@ -2,6 +2,5 @@
 {
     public class PaymentSettled : DomainEventBase
     {
-        public Guid PaymentReference { get; set; }
     }
 }
