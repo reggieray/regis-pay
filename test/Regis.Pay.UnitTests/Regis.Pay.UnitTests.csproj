@@ -25,6 +25,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Regis.Pay.Api\Regis.Pay.Api.csproj" />
+    <ProjectReference Include="..\..\src\Regis.Pay.ChangeFeed\Regis.Pay.ChangeFeed.csproj" />
+    <ProjectReference Include="..\..\src\Regis.Pay.EventConsumer\Regis.Pay.EventConsumer.csproj" />
   </ItemGroup>
 
 </Project>
