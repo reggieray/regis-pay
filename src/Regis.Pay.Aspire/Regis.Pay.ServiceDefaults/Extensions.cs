@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.ServiceDiscovery;
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
@@ -17,26 +16,31 @@ public static class Extensions
 {
     public static TBuilder AddServiceDefaults<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
     {
-        builder.ConfigureOpenTelemetry();
+        if (builder.Environment.IsDevelopment())
+        { 
 
-        builder.AddDefaultHealthChecks();
+            builder.ConfigureOpenTelemetry();
 
-        builder.Services.AddServiceDiscovery();
+            builder.AddDefaultHealthChecks();
 
-        builder.Services.ConfigureHttpClientDefaults(http =>
-        {
-            // Turn on resilience by default
-            http.AddStandardResilienceHandler();
+            builder.Services.AddServiceDiscovery();
 
-            // Turn on service discovery by default
-            http.AddServiceDiscovery();
-        });
+            builder.Services.ConfigureHttpClientDefaults(http =>
+            {
+                // Turn on resilience by default
+                http.AddStandardResilienceHandler();
 
-        // Uncomment the following to restrict the allowed schemes for service discovery.
-        // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
-        // {
-        //     options.AllowedSchemes = ["https"];
-        // });
+                // Turn on service discovery by default
+                http.AddServiceDiscovery();
+            });
+
+                // Uncomment the following to restrict the allowed schemes for service discovery.
+                // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
+                // {
+                //     options.AllowedSchemes = ["https"];
+                // });
+
+        }
 
         return builder;
     }

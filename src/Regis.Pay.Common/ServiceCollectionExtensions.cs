@@ -18,14 +18,18 @@ namespace Regis.Pay.Common
         {
             services
                 .AddRefitClient<IPaymentsApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(configuration["ApiClients:Payments:BaseUrl"]!));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(configuration["ApiClients:Payments:BaseUrl"]!))
+                .AddPolicyHandler(RetryPolicies.GetRetryPolicy())
+                .AddPolicyHandler(RetryPolicies.GetCircuitBreakerPolicy());
         }
 
         public static void AddNotificationsApiClient(this IServiceCollection services, IConfiguration configuration)
         {
             services
                 .AddRefitClient<INotificationsApi>()
-                .ConfigureHttpClient(c => c.BaseAddress = new Uri(configuration["ApiClients:Notifications:BaseUrl"]!));
+                .ConfigureHttpClient(c => c.BaseAddress = new Uri(configuration["ApiClients:Notifications:BaseUrl"]!))
+                .AddPolicyHandler(RetryPolicies.GetRetryPolicy())
+                .AddPolicyHandler(RetryPolicies.GetCircuitBreakerPolicy());
         }
 
         public static void AddEventStore(this IServiceCollection services, IConfiguration configuration)

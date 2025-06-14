@@ -12,9 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.2.1" />
-    <PackageReference Include="Aspire.Hosting.Azure.CosmosDB" Version="9.2.1" />
-    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.2.1" />
+    <None Include=".rabbitmq-plugins\rabbitmq_enabled_plugins">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.Azure.CosmosDB" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.RabbitMQ" Version="9.3.1" />
   </ItemGroup>
 
   <ItemGroup>

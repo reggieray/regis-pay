@@ -70,7 +70,7 @@ There are three ways to get started and up and running.
 ## Aspire
 
 > [!NOTE]  
-> This is setup with a locally installed version of the Cosmos DB emulator, but could be easily updated to use a Aspire version. It is mainly setup with a locally installed version because I already had it installed.
+> This is setup with a locally installed version of the Cosmos DB emulator, but could be easily updated to use a Aspire version. It is mainly setup with a locally installed version.
 
 ### Prerequisites
 
@@ -85,7 +85,7 @@ There are three ways to get started and up and running.
 ## Docker Compose
 
 > [!NOTE]  
-> This option offers an all in one solution. No need to install/run CosmosDB or RabbitMQ individually.
+> This is no longer maintained, it may need updating in order for it to work, use at your own discretion. Aspire is the recommend way to get started,
 
 ### Prerequisites
 
