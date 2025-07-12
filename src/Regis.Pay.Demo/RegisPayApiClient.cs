@@ -17,7 +17,11 @@ namespace Regis.Pay.Demo
         }
     }
 
-    public record RegisPayPaymentRequest(decimal Amount, string Currency);
+    public class RegisPayPaymentRequest
+    {
+        public decimal Amount { get; set; } = 108.1M;
+        public string Currency { get; set; } = "EUR";
+    };
 
     public record RegisPayPaymentResponse(Guid PaymentId);
 }

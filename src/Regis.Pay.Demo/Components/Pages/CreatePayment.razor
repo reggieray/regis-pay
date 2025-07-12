@@ -1,6 +1,8 @@
 ﻿@page "/create-payment"
 @using System.Text.Json
+@using Newtonsoft.Json
 @using Regis.Pay.Common.EventStore
+@using JsonSerializer = System.Text.Json.JsonSerializer
 
 @inject RegisPayApiClient ApiClient
 @inject CosmosDbService CosmosService
@@ -9,12 +11,11 @@
 <PageTitle>Create Payment</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">Create Payment</MudText>
-<MudText Typo="Typo.body1" Class="mb-8">This demo ui allows you to tigger a payment.</MudText>
+<MudText Typo="Typo.body1" Class="mb-8">This demo ui allows you to create a payment.</MudText>
 
 <MudPaper Class="p-6 mx-auto max-w-screen-sm mt-10" Elevation="8">
 
-    <MudTextField @bind-Value="Amount" Label="Amount" Variant="Variant.Outlined" Adornment="Adornment.Start" />
-    <MudTextField @bind-Value="Currency" Label="Currency" Variant="Variant.Outlined" />
+    <MudTextField @ref="_jsonPayload" T="string" Label="Request" Variant="Variant.Outlined" Text="@(JsonSerializer.Serialize(Request, new JsonSerializerOptions { WriteIndented = true } ))" Lines="10" />
 
     <MudButton Color="Color.Primary" OnClick="SendRequest" Class="mt-4" Variant="Variant.Filled">
         Send
@@ -43,11 +44,12 @@
             @foreach (var @event in Events)
             {
                 <MudExpansionPanel Text="@(@event.EventType)" MaxHeight="500">
-                    <MudText>@(JsonSerializer.Serialize(@event))</MudText>
+                    <pre>@JsonConvert.SerializeObject(@event, Formatting.Indented)</pre>
                 </MudExpansionPanel>
             }
         </MudExpansionPanels>
-    </MudPaper>}
+    </MudPaper>
+}
 
 @if (IsLoadingEvents)
 {
@@ -57,8 +59,8 @@
 
 
 @code {
-    public decimal Amount { get; set; } = 100;
-    public string Currency { get; set; } = "EUR";
+    private MudTextField<string>? _jsonPayload;
+    private object Request { get; set; } = new RegisPayPaymentRequest();
     public string? ResponseText { get; set; }
     public string? ErrorText { get; set; }
     private List<EventWrapper>? Events;
@@ -69,17 +71,13 @@
     {
         ErrorText = ResponseText = string.Empty;
 
-        var request = new
-        {
-            amount = Amount,
-            currency = Currency
-        };
-
         try
         {
-            var response = await ApiClient.CreatePayment(new RegisPayPaymentRequest(Amount, Currency));
+            var request = JsonSerializer.Deserialize<RegisPayPaymentRequest>(_jsonPayload?.Text!);
 
-            ResponseText = JsonSerializer.Serialize(response);
+            var response = await ApiClient.CreatePayment(request!);
+
+            ResponseText = JsonSerializer.Serialize(response, new JsonSerializerOptions { WriteIndented = true });
 
             await LoadPaymentDetails(response.PaymentId);
         }

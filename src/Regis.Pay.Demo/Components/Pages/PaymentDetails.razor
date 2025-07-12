@@ -1,0 +1,54 @@
+﻿@page "/payment-details/{PaymentId:guid}"
+@using Newtonsoft.Json
+@using Regis.Pay.Common.EventStore
+@inject CosmosDbService CosmosService
+
+
+<PageTitle>Payment Details</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Payment Details</MudText>
+
+@if (Events is not null && Events.Any())
+{
+    <MudPaper Class="p-6 mx-auto max-w-screen-sm mt-10" Elevation="8">
+        <MudExpansionPanels>
+            @foreach (var @event in Events)
+            {
+                <MudExpansionPanel Text="@(@event.EventType)" MaxHeight="500">
+                    <pre>@JsonConvert.SerializeObject(@event, Formatting.Indented)</pre>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    </MudPaper>
+}
+
+@if (IsLoadingEvents)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+    <p>Loading payment events, please wait...</p>
+}
+
+
+@code {
+    [Parameter]
+    public Guid PaymentId { get; set; }
+    
+    private List<EventWrapper>? Events;
+    private bool IsLoadingEvents = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPaymentDetails(PaymentId);
+    }
+
+    private async Task LoadPaymentDetails(Guid paymentId)
+    {
+        var sqlQueryText = $"SELECT * FROM events e WHERE e.stream.id = 'pay:{paymentId}' ORDER BY e.stream.version";
+
+        IsLoadingEvents = true;
+        
+        Events = await CosmosService.GetItemsAsync<EventWrapper>(sqlQueryText);
+        
+        IsLoadingEvents = false;
+    }
+}

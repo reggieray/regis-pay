@@ -1,6 +1,87 @@
 ﻿@page "/"
+@using Regis.Pay.Common.EventStore
+
+@inject CosmosDbService CosmosService
 
 <PageTitle>Home</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">Regis Pay Demo App!</MudText>
 <MudText Class="mb-8">Use this demo app to trigger payments through the Regis Pay orchestration</MudText>
+
+@if (Payments is not null && Payments.Any())
+{
+    <MudDataGrid Items="@Payments" SortMode="SortMode.Multiple" QuickFilter="@_quickFilter">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Payments</MudText>
+            <MudSpacer />
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <TemplateColumn T="PaymentInitiated">
+                <CellTemplate Context="payment">
+                    <MudLink Href="@($"/payment-details/{payment.Item.PaymentId}")">@payment.Item.PaymentId</MudLink>
+                </CellTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Amount"/>
+            <PropertyColumn Property="x => x.Currency"/>
+            <PropertyColumn Property="x => x.Timestamp"/>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="PaymentInitiated" />
+        </PagerContent>
+    </MudDataGrid>
+}
+
+
+@if (IsLoadingEvents)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Size="Size.Large" />
+    <p>Loading payments, please wait...</p>
+}
+
+
+@code {
+    private List<EventWrapper>? Events;
+    private List<PaymentInitiated>? Payments;
+    private bool IsLoadingEvents = false;
+    private string _searchString;
+    
+    private Func<PaymentInitiated, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.PaymentId.ToString().Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.Currency.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsLoadingEvents = true;
+        
+        Events = await CosmosService.GetItemsAsync<EventWrapper>("SELECT * FROM events e WHERE e.stream.version = 1 ORDER BY e._ts DESC");
+
+        Payments = Events.Select(x => x.EventData.ToObject<PaymentInitiated>()).ToList();
+
+        IsLoadingEvents = false;
+    }
+
+
+    class PaymentInitiated
+    {
+        public Guid PaymentId { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string Currency { get; set; }
+        
+        public DateTime Timestamp { get; set; }
+    }
+
+}
