@@ -47,11 +47,10 @@ namespace Regis.Pay.Common
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(options.Host, "/", h => {
-                        h.Username(options.Username);
-                        h.Password(options.Password);
-                    });
-
+                    var connectionString = context.GetRequiredService<IConfiguration>()
+                        .GetConnectionString("regis-pay-messaging")!;
+                    
+                    cfg.Host(new Uri(connectionString), _ => {});
                     cfg.ConfigureEndpoints(context);
                 });
 

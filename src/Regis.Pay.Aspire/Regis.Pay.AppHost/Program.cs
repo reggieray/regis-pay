@@ -24,6 +24,7 @@ var mocks = builder.AddProject<Projects.Regis_Pay_Mocks>("regis-pay-mocks")
         });
 
 var api = builder.AddProject<Projects.Regis_Pay_Api>("regis-pay-api")
+    .WithExternalHttpEndpoints()
     .WithReference(cosmos);
 
 builder.AddProject<Projects.Regis_Pay_ChangeFeed>("regis-pay-changefeed")

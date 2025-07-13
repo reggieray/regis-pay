@@ -4,6 +4,6 @@ namespace Regis.Pay.Tests.Shared.EventTestConsumer.EventTestConsumer
 {
     public class PaymentCompletedEventTestConsumer : EventTestConsumerBase<PaymentCompleted>
     {
-        public override string ExchangeName => "Regis.Pay.Domain.IntegrationEvents:PaymentCompleted";
+        protected override string ExchangeName => "Regis.Pay.Domain.IntegrationEvents:PaymentCompleted";
     }
 }

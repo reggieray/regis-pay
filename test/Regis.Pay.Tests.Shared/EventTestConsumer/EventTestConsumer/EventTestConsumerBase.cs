@@ -4,64 +4,63 @@ using System.Text;
 using System.Text.Json;
 using Regis.Pay.Domain;
 
-namespace Regis.Pay.Tests.Shared.EventTestConsumer.EventTestConsumer
+namespace Regis.Pay.Tests.Shared.EventTestConsumer.EventTestConsumer;
+
+public abstract class EventTestConsumerBase<T> where T : class, IIntegrationEvent
 {
-    public abstract class EventTestConsumerBase<T> where T : class, IIntegrationEvent
+    private T _event = null!;
+    protected abstract string ExchangeName { get; }
+
+    public async Task<T> ListenToEvent(Func<Task> function, string rabbitmq, int waitMs = 30000)
     {
-        private T _event = default!;
-        public abstract string ExchangeName { get; }
+        var tokenSource = new CancellationTokenSource();
 
-        public async Task<T> ListenToEvent(Func<Task> function, int waitMS = 30000)
+        var factory = new ConnectionFactory { Uri = new Uri(rabbitmq) };
+        await using var connection = await factory.CreateConnectionAsync(tokenSource.Token);
+        await using var channel = await connection.CreateChannelAsync(cancellationToken: tokenSource.Token);
+
+        var queue = await channel.QueueDeclareAsync(cancellationToken: tokenSource.Token);
+            
+        await channel.QueueBindAsync(queue: queue.QueueName,
+            exchange: ExchangeName,
+            routingKey: string.Empty, cancellationToken: tokenSource.Token);
+
+        var consumer = new AsyncEventingBasicConsumer(channel);
+        consumer.ReceivedAsync += async (model, ea) =>
         {
-            var tokenSource = new CancellationTokenSource();
+            var body = ea.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body) as dynamic;
 
-            var factory = new ConnectionFactory { HostName = "localhost" };
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
-
-            var queueName = channel.QueueDeclare().QueueName;
-
-            channel.QueueBind(queue: queueName,
-                  exchange: ExchangeName,
-                  routingKey: string.Empty);
-
-            var consumer = new EventingBasicConsumer(channel);
-            consumer.Received += (model, ea) =>
+            var jsonOptions = new JsonSerializerOptions
             {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body) as dynamic;
-
-                var jsonOptions = new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                };
-
-                var consumedMessage = JsonSerializer.Deserialize<ConsumedMessage>(message, jsonOptions);
-
-                var msgAsString = JsonSerializer.Serialize(consumedMessage.Message);
-
-                _event = JsonSerializer.Deserialize<T>(msgAsString, jsonOptions);
-
-                tokenSource.Cancel();
-                tokenSource.Dispose();
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
 
-            channel.BasicConsume(queue: queueName,
-                     autoAck: true,
-                     consumer: consumer);
+            var consumedMessage = JsonSerializer.Deserialize<ConsumedMessage>(message, jsonOptions);
 
-            await function();
+            var msgAsString = JsonSerializer.Serialize(consumedMessage.Message);
 
-            try
-            {
-                await Task.Delay(TimeSpan.FromMilliseconds(waitMS), tokenSource.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                //swallowing expected exeption
-            }
+            _event = JsonSerializer.Deserialize<T>(msgAsString, jsonOptions);
 
-            return _event;
+            await tokenSource.CancelAsync();
+            tokenSource.Dispose();
+        };
+
+        await channel.BasicConsumeAsync(queue: queue.QueueName,
+            autoAck: true,
+            consumer: consumer, cancellationToken: tokenSource.Token);
+
+        await function();
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromMilliseconds(waitMs), tokenSource.Token);
         }
+        catch (TaskCanceledException)
+        {
+            //swallowing expected exception
+        }
+
+        return _event;
     }
 }

@@ -1,4 +1,3 @@
-using MassTransit;
 using NBomber.CSharp;
 using Refit;
 using Regis.Pay.Tests.Shared.ApiClient;
@@ -12,7 +11,7 @@ public class PaymentLoadTests
     [Fact]
     public void CreatePaymentApiLoadTest()
     {
-        var apiClient = RestService.For<IRegisPayApiClient>("https://localhost:4433");
+        var apiClient = RestService.For<IRegisPayApiClient>("https://localhost:7185");
 
         var scenario = Scenario.Create("create_payment_api_response", async context =>
         {
@@ -39,7 +38,7 @@ public class PaymentLoadTests
     public void FullPaymentJourneyLoadTest()
     {
         var timeout = TimeSpan.FromMinutes(10);
-        var apiClient = RestService.For<IRegisPayApiClient>("https://localhost:4433");
+        var apiClient = RestService.For<IRegisPayApiClient>("https://localhost:7185");
 
         var paymentInitiatedEvents = new MultiPaymentInitiatedEventTestConsumer();
         var paymentCreatedEvents = new MultiPaymentCreatedEventTestConsumer();

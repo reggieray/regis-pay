@@ -9,7 +9,7 @@ namespace Regis.Pay.Tests.Shared.EventTestConsumer.MultiEventTestConsumer
 {
     public abstract class MultiEventTestConsumerBase<T> : IDisposable where T : class, IIntegrationEvent
     {
-        private readonly IModel _channel;
+        private readonly IChannel _channel;
 
         public readonly ConcurrentBag<string> EventIds = new();
         public abstract string ExchangeName { get; }
@@ -19,20 +19,20 @@ namespace Regis.Pay.Tests.Shared.EventTestConsumer.MultiEventTestConsumer
         protected MultiEventTestConsumerBase()
         {
             var factory = new ConnectionFactory { HostName = "localhost" };
-            var connection = factory.CreateConnection();
-            _channel = connection.CreateModel();
+            var connection = factory.CreateConnectionAsync().Result;
+            _channel = connection.CreateChannelAsync().Result;
         }
 
         public void ListenToEvents()
         {
-            var queueName = _channel.QueueDeclare().QueueName;
+            var queueName = _channel.QueueDeclareAsync().Result.QueueName;
 
-            _channel.QueueBind(queue: queueName,
+            _channel.QueueBindAsync(queue: queueName,
                   exchange: ExchangeName,
                   routingKey: string.Empty);
 
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (model, ea) =>
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+            consumer.ReceivedAsync += async (model, ea) =>
             {
                 var body = ea.Body.ToArray();
                 var message = Encoding.UTF8.GetString(body) as dynamic;
@@ -51,14 +51,14 @@ namespace Regis.Pay.Tests.Shared.EventTestConsumer.MultiEventTestConsumer
                 Add(@event);
             };
 
-            _channel.BasicConsume(queue: queueName,
+            _channel.BasicConsumeAsync(queue: queueName,
                      autoAck: true,
                      consumer: consumer);
         }
 
         public void Dispose()
         {
-            _channel.Close();
+            _channel.CloseAsync();
             _channel.Dispose();
         }
     }
